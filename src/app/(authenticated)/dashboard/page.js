@@ -55,18 +55,6 @@ export default function DashboardPage() {
       }
     };
     load();
-    if (userRole === 'user') {
-      const refetch = () => load();
-      window.addEventListener('focus', refetch);
-      const onVisible = () => { if (typeof document !== 'undefined' && document.visibilityState === 'visible') refetch(); };
-      document.addEventListener('visibilitychange', onVisible);
-      const poll = setInterval(load, 30_000);
-      return () => {
-        window.removeEventListener('focus', refetch);
-        document.removeEventListener('visibilitychange', onVisible);
-        clearInterval(poll);
-      };
-    }
   }, [userId, userRole]);
 
   useEffect(() => {
