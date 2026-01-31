@@ -39,6 +39,7 @@ const userNav = [
   { href: '/my-attendance', label: 'My Attendance', icon: 'CalendarCheck' },
   { href: '/excuse-request', label: 'Excuse Request', icon: 'MessageSquarePlus' },
   { href: '/rules', label: 'Office Rules', icon: 'FileText' },
+  { href: '/settings', label: 'Settings', icon: 'Settings' },
   { href: '/profile', label: 'Profile', icon: 'User' },
 ];
 
@@ -47,6 +48,7 @@ const adminNav = [
   { href: '/employees', label: 'Employees', icon: 'Users' },
   { href: '/attendance-control', label: 'Attendance Control', icon: 'ClipboardList' },
   { href: '/rules', label: 'Office Rules', icon: 'FileText' },
+  { href: '/settings', label: 'Settings', icon: 'Settings' },
   { href: '/reports', label: 'Reports', icon: 'BarChart3' },
 ];
 
@@ -55,6 +57,7 @@ const superadminNav = [
   { href: '/excuse-approvals', label: 'Excuse Approvals', icon: 'CheckSquare' },
   { href: '/user-management', label: 'User Management', icon: 'Users' },
   { href: '/rules', label: 'Office Rules', icon: 'FileText' },
+  { href: '/settings', label: 'Settings', icon: 'Settings' },
   { href: '/reports', label: 'Reports', icon: 'BarChart3' },
 ];
 
@@ -80,7 +83,7 @@ export default function Sidebar() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-white border border-black/10 shadow-card text-black"
+        className="lg:hidden fixed top-4 right-4 z-40 p-2 rounded-lg bg-white border border-black/10 shadow-card text-black"
         aria-label="Open menu"
       >
         <Menu className="w-6 h-6" />

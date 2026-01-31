@@ -249,3 +249,32 @@ export async function updateRules(content) {
   if (!res.ok) throw new Error(data.error || 'Failed to update rules');
   return data;
 }
+
+// Me / Account (mount: /api/me)
+export async function updateMe(username) {
+  const res = await fetch(`${getBaseUrl()}/api/me`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ username }),
+  });
+  const data = await parseJson(res);
+  if (!res.ok) throw new Error(data.error || 'Failed to update profile');
+  return data;
+}
+
+export async function updateMyPassword(currentPassword, newPassword) {
+  const res = await fetch(`${getBaseUrl()}/api/me/password`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+  const data = await parseJson(res);
+  if (!res.ok) throw new Error(data.error || 'Failed to update password');
+  return data;
+}
