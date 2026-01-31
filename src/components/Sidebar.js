@@ -11,6 +11,7 @@ import {
   User,
   Users,
   ClipboardList,
+  FileText,
   BarChart3,
   CheckSquare,
   Settings,
@@ -27,6 +28,7 @@ const iconMap = {
   User,
   Users,
   ClipboardList,
+  FileText,
   BarChart3,
   CheckSquare,
   Settings,
@@ -36,6 +38,7 @@ const userNav = [
   { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
   { href: '/my-attendance', label: 'My Attendance', icon: 'CalendarCheck' },
   { href: '/excuse-request', label: 'Excuse Request', icon: 'MessageSquarePlus' },
+  { href: '/rules', label: 'Office Rules', icon: 'FileText' },
   { href: '/profile', label: 'Profile', icon: 'User' },
 ];
 
@@ -43,6 +46,7 @@ const adminNav = [
   { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
   { href: '/employees', label: 'Employees', icon: 'Users' },
   { href: '/attendance-control', label: 'Attendance Control', icon: 'ClipboardList' },
+  { href: '/rules', label: 'Office Rules', icon: 'FileText' },
   { href: '/reports', label: 'Reports', icon: 'BarChart3' },
 ];
 
@@ -50,6 +54,7 @@ const superadminNav = [
   { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
   { href: '/excuse-approvals', label: 'Excuse Approvals', icon: 'CheckSquare' },
   { href: '/user-management', label: 'User Management', icon: 'Users' },
+  { href: '/rules', label: 'Office Rules', icon: 'FileText' },
   { href: '/reports', label: 'Reports', icon: 'BarChart3' },
 ];
 

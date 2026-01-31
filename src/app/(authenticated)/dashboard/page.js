@@ -58,10 +58,9 @@ export default function DashboardPage() {
   }, [userId, userRole]);
 
   useEffect(() => {
-    if (user?.role !== 'user') return;
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, [user?.role]);
+  }, []);
 
   if (!user) return null;
 
@@ -75,6 +74,11 @@ export default function DashboardPage() {
     return today?.status === 'Present';
   }).length;
   const absentToday = adminData.length - presentToday;
+
+  const formatTimeShort = (d) => {
+    if (!d) return '—';
+    return new Date(d).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  };
 
   if (loading) {
     return (
@@ -216,36 +220,92 @@ export default function DashboardPage() {
           )}
 
           {user.role === 'superadmin' && (
-            <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
-              <h2 className="text-lg font-bold text-black p-5 pb-0">Excuse Requests</h2>
-              <p className="text-sm text-black/70 px-5 pt-1">
-                Pending: {pendingExcuses.length} — Use &quot;Excuse Approvals&quot; in the sidebar to approve or reject.
-              </p>
-              {pendingExcuses.length > 0 && (
-                <div className="p-5 overflow-auto max-h-[500px]">
-                  <table className="min-w-full divide-y divide-black/10">
-                    <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Message</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-black/10">
-                      {pendingExcuses.slice(0, 5).map((excuse) => (
-                        <tr key={excuse._id} className="hover:bg-primary/5 transition-colors">
-                          <td className="px-4 py-3 text-sm font-medium text-black">{excuse.userId?.username ?? '—'}</td>
-                          <td className="px-4 py-3 text-sm text-black/80">
-                            {new Date(excuse.date).toLocaleDateString()}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-black/80 max-w-xs truncate">{excuse.message}</td>
+            <>
+              {adminData.length > 0 && (
+                <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
+                  <h2 className="text-lg font-bold text-black p-5 pb-0">Today&apos;s Attendance (All Employees)</h2>
+                  <p className="text-sm text-black/70 px-5 pt-1">
+                    Showing today&apos;s status for all users.
+                  </p>
+                  <div className="p-5 overflow-auto max-h-[500px]">
+                    <table className="min-w-full divide-y divide-black/10">
+                      <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Status</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Arrive</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Leave</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Today</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-black/10">
+                        {adminData.map(({ user: emp, attendance }) => {
+                          const today = attendance?.find((r) => toDateKey(r.date) === todayKey());
+                          const status = today?.status ?? '—';
+                          const isPresent = status === 'Present';
+                          const hasLeft = !!today?.logoutTime;
+                          const todayValue = hasLeft
+                            ? formatHoursToHMS(today?.workingHours)
+                            : today?.loginTime
+                              ? formatElapsed(now - new Date(today.loginTime).getTime())
+                              : '—';
+                          return (
+                            <tr key={emp._id} className="hover:bg-primary/5 transition-colors">
+                              <td className="px-4 py-3 text-sm font-medium text-black">{emp.username}</td>
+                              <td className="px-4 py-3">
+                                <span
+                                  className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                                    isPresent
+                                      ? 'bg-primary/10 text-primary border-primary/30'
+                                      : 'bg-black/10 text-black border-black/20'
+                                  }`}
+                                >
+                                  {status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/80">{formatTimeShort(today?.loginTime)}</td>
+                              <td className="px-4 py-3 text-sm text-black/80">{formatTimeShort(today?.logoutTime)}</td>
+                              <td className="px-4 py-3 text-sm font-medium text-black">{todayValue}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
-            </div>
+
+              <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
+                <h2 className="text-lg font-bold text-black p-5 pb-0">Excuse Requests</h2>
+                <p className="text-sm text-black/70 px-5 pt-1">
+                  Pending: {pendingExcuses.length} — Use &quot;Excuse Approvals&quot; in the sidebar to approve or reject.
+                </p>
+                {pendingExcuses.length > 0 && (
+                  <div className="p-5 overflow-auto max-h-[500px]">
+                    <table className="min-w-full divide-y divide-black/10">
+                      <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Message</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-black/10">
+                        {pendingExcuses.slice(0, 5).map((excuse) => (
+                          <tr key={excuse._id} className="hover:bg-primary/5 transition-colors">
+                            <td className="px-4 py-3 text-sm font-medium text-black">{excuse.userId?.username ?? '—'}</td>
+                            <td className="px-4 py-3 text-sm text-black/80">
+                              {new Date(excuse.date).toLocaleDateString()}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-black/80 max-w-xs truncate">{excuse.message}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </>
       )}

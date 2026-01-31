@@ -225,3 +225,27 @@ export async function deleteUser(userId) {
   if (!res.ok) throw new Error(data.error || 'Failed to delete user');
   return data;
 }
+
+// Rules / Policy (mount: /api/rules)
+export async function getRules() {
+  const res = await fetch(`${getBaseUrl()}/api/rules`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await parseJson(res);
+  if (!res.ok) throw new Error(data.error || 'Failed to fetch rules');
+  return data;
+}
+
+export async function updateRules(content) {
+  const res = await fetch(`${getBaseUrl()}/api/rules`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ content }),
+  });
+  const data = await parseJson(res);
+  if (!res.ok) throw new Error(data.error || 'Failed to update rules');
+  return data;
+}
