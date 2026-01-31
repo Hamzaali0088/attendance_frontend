@@ -121,7 +121,23 @@ export default function DashboardPage() {
               {user.role === 'admin' && (
                 <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
                   <h2 className="text-lg font-bold text-black p-5 pb-0">Today&apos;s Attendance Preview</h2>
-                  <div className="p-5 overflow-auto max-h-[500px]">
+                  {/* Mobile cards skeleton */}
+                  <div className="md:hidden p-5 space-y-3">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div key={i} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="space-y-2">
+                            <Skeleton className="h-3 w-20" />
+                            <Skeleton className="h-4 w-28" />
+                          </div>
+                          <Skeleton className="h-5 w-16 rounded-full" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop table skeleton */}
+                  <div className="hidden md:block p-5 overflow-auto max-h-[500px]">
                     <table className="min-w-full divide-y divide-black/10">
                       <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
                         <tr>
@@ -147,7 +163,37 @@ export default function DashboardPage() {
                   <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
                     <h2 className="text-lg font-bold text-black p-5 pb-0">Today&apos;s Attendance (All Employees)</h2>
                     <p className="text-sm text-black/70 px-5 pt-1">Showing today&apos;s status for all users.</p>
-                    <div className="p-5 overflow-auto max-h-[500px]">
+                    {/* Mobile cards skeleton */}
+                    <div className="md:hidden p-5 space-y-3 max-h-[500px] overflow-auto">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="space-y-2">
+                              <Skeleton className="h-3 w-20" />
+                              <Skeleton className="h-4 w-28" />
+                            </div>
+                            <Skeleton className="h-5 w-16 rounded-full" />
+                          </div>
+                          <div className="mt-3 grid grid-cols-2 gap-3">
+                            <div>
+                              <Skeleton className="h-3 w-16" />
+                              <Skeleton className="h-4 w-20 mt-1" />
+                            </div>
+                            <div>
+                              <Skeleton className="h-3 w-16" />
+                              <Skeleton className="h-4 w-20 mt-1" />
+                            </div>
+                            <div className="col-span-2">
+                              <Skeleton className="h-3 w-16" />
+                              <Skeleton className="h-4 w-24 mt-1" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop table skeleton */}
+                    <div className="hidden md:block p-5 overflow-auto max-h-[500px]">
                       <table className="min-w-full divide-y divide-black/10">
                         <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
                           <tr>
@@ -176,7 +222,20 @@ export default function DashboardPage() {
                   <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
                     <h2 className="text-lg font-bold text-black p-5 pb-0">Excuse Requests</h2>
                     <p className="text-sm text-black/70 px-5 pt-1">Pending: <Skeleton className="inline-block h-4 w-6 align-middle" /> — Use &quot;Excuse Approvals&quot; in the sidebar to approve or reject.</p>
-                    <div className="p-5 overflow-auto max-h-[500px]">
+                    {/* Mobile cards skeleton */}
+                    <div className="md:hidden p-5 space-y-3 max-h-[500px] overflow-auto">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                          <Skeleton className="h-4 w-28" />
+                          <Skeleton className="h-4 w-20 mt-2" />
+                          <Skeleton className="h-4 w-full mt-3" />
+                          <Skeleton className="h-4 w-56 mt-2" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop table skeleton */}
+                    <div className="hidden md:block p-5 overflow-auto max-h-[500px]">
                       <table className="min-w-full divide-y divide-black/10">
                         <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
                           <tr>
@@ -295,7 +354,34 @@ export default function DashboardPage() {
           {user.role === 'admin' && adminData.length > 0 && (
             <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
               <h2 className="text-lg font-bold text-black p-5 pb-0">Today&apos;s Attendance Preview</h2>
-              <div className="p-5 overflow-auto max-h-[500px]">
+              {/* Mobile cards */}
+              <div className="md:hidden p-5 space-y-3">
+                {adminData.slice(0, 10).map(({ user: emp, attendance }) => {
+                  const today = attendance?.find((r) => toDateKey(r.date) === todayKey());
+                  const status = today?.status ?? '—';
+                  const isPresent = status === 'Present';
+                  return (
+                    <div key={emp._id} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-black/70 uppercase">Employee</p>
+                          <p className="text-sm font-medium text-black truncate">{emp.username}</p>
+                        </div>
+                        <span
+                          className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                            isPresent ? 'bg-primary/10 text-primary border-primary/30' : 'bg-black/10 text-black border-black/20'
+                          }`}
+                        >
+                          {status}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop table */}
+              <div className="hidden md:block p-5 overflow-auto max-h-[500px]">
                 <table className="min-w-full divide-y divide-black/10">
                   <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
                     <tr>
@@ -333,7 +419,55 @@ export default function DashboardPage() {
                   <p className="text-sm text-black/70 px-5 pt-1">
                     Showing today&apos;s status for all users.
                   </p>
-                  <div className="p-5 overflow-auto max-h-[500px]">
+                  {/* Mobile cards */}
+                  <div className="md:hidden p-5 space-y-3 max-h-[500px] overflow-auto">
+                    {adminData.map(({ user: emp, attendance }) => {
+                      const today = attendance?.find((r) => toDateKey(r.date) === todayKey());
+                      const status = today?.status ?? '—';
+                      const isPresent = status === 'Present';
+                      const hasLeft = !!today?.logoutTime;
+                      const todayValue = hasLeft
+                        ? formatHoursToHMS(today?.workingHours)
+                        : today?.loginTime
+                          ? formatElapsed(now - new Date(today.loginTime).getTime())
+                          : '—';
+                      return (
+                        <div key={emp._id} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-xs font-semibold text-black/70 uppercase">Employee</p>
+                              <p className="text-sm font-medium text-black truncate">{emp.username}</p>
+                            </div>
+                            <span
+                              className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                                isPresent ? 'bg-primary/10 text-primary border-primary/30' : 'bg-black/10 text-black border-black/20'
+                              }`}
+                            >
+                              {status}
+                            </span>
+                          </div>
+
+                          <div className="mt-3 grid grid-cols-2 gap-3">
+                            <div>
+                              <p className="text-xs font-semibold text-black/70 uppercase">Arrive</p>
+                              <p className="text-sm text-black">{formatTimeShort(today?.loginTime)}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold text-black/70 uppercase">Leave</p>
+                              <p className="text-sm text-black">{formatTimeShort(today?.logoutTime)}</p>
+                            </div>
+                            <div className="col-span-2">
+                              <p className="text-xs font-semibold text-black/70 uppercase">Today</p>
+                              <p className="text-sm font-medium text-black">{todayValue}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Desktop table */}
+                  <div className="hidden md:block p-5 overflow-auto max-h-[500px]">
                     <table className="min-w-full divide-y divide-black/10">
                       <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
                         <tr>
@@ -387,28 +521,47 @@ export default function DashboardPage() {
                   Pending: {pendingExcuses.length} — Use &quot;Excuse Approvals&quot; in the sidebar to approve or reject.
                 </p>
                 {pendingExcuses.length > 0 && (
-                  <div className="p-5 overflow-auto max-h-[500px]">
-                    <table className="min-w-full divide-y divide-black/10">
-                      <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
-                        <tr>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Message</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-black/10">
-                        {pendingExcuses.slice(0, 5).map((excuse) => (
-                          <tr key={excuse._id} className="hover:bg-primary/5 transition-colors">
-                            <td className="px-4 py-3 text-sm font-medium text-black">{excuse.userId?.username ?? '—'}</td>
-                            <td className="px-4 py-3 text-sm text-black/80">
-                              {new Date(excuse.date).toLocaleDateString()}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-black/80 max-w-xs truncate">{excuse.message}</td>
+                  <>
+                    {/* Mobile cards */}
+                    <div className="md:hidden p-5 space-y-3 max-h-[500px] overflow-auto">
+                      {pendingExcuses.slice(0, 5).map((excuse) => (
+                        <div key={excuse._id} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                          <p className="font-bold text-black">{excuse.userId?.username ?? '—'}</p>
+                          <p className="text-sm text-black/70 mt-1">
+                            {new Date(excuse.date).toLocaleDateString()}
+                          </p>
+                          <div className="mt-3">
+                            <p className="text-xs font-semibold text-black/70 uppercase">Message</p>
+                            <p className="text-sm text-black/80 whitespace-pre-wrap">{excuse.message}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop table */}
+                    <div className="hidden md:block p-5 overflow-auto max-h-[500px]">
+                      <table className="min-w-full divide-y divide-black/10">
+                        <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Message</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-black/10">
+                          {pendingExcuses.slice(0, 5).map((excuse) => (
+                            <tr key={excuse._id} className="hover:bg-primary/5 transition-colors">
+                              <td className="px-4 py-3 text-sm font-medium text-black">{excuse.userId?.username ?? '—'}</td>
+                              <td className="px-4 py-3 text-sm text-black/80">
+                                {new Date(excuse.date).toLocaleDateString()}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-black/80 max-w-xs truncate">{excuse.message}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
                 )}
               </div>
             </>

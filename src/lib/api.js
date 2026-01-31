@@ -28,7 +28,7 @@ const getBaseUrl = () => {
   if (typeof window !== 'undefined') {
     return process.env.NEXT_PUBLIC_API_URL || '';
   }
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+  return process.env.NEXT_PUBLIC_API_URL || 'https://attendancebackend-production-a8b2.up.railway.app';
 };
 
 const getToken = () => {

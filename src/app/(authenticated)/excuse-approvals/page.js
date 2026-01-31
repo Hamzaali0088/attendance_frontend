@@ -6,7 +6,7 @@ import { Check, X, Loader2 } from 'lucide-react';
 import { getUser, isAuthenticated } from '@/lib/auth';
 import { getPendingExcuses, updateExcuseStatus } from '@/lib/api';
 import PageHeader from '@/components/PageHeader';
-import { TableSkeleton } from '@/components/Skeleton';
+import Skeleton, { TableSkeleton } from '@/components/Skeleton';
 import Modal from '@/components/Modal';
 
 function formatDate(d) {
@@ -82,71 +82,154 @@ export default function ExcuseApprovalsPage() {
       <PageHeader title="Excuse Approvals" />
       <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
         {loading ? (
-          <TableSkeleton
-            rows={6}
-            cols={4}
-            headers={['Employee', 'Date', 'Message', 'Actions']}
-            className="max-h-[500px]"
-          />
+          <>
+            {/* Mobile cards skeleton */}
+            <div className="md:hidden p-4 space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-40" />
+                    </div>
+                    <Skeleton className="h-9 w-24 rounded-lg" />
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table skeleton */}
+            <div className="hidden md:block">
+              <TableSkeleton
+                rows={6}
+                cols={4}
+                headers={['Employee', 'Date', 'Message', 'Actions']}
+                className="max-h-[500px]"
+              />
+            </div>
+          </>
         ) : excuses.length === 0 ? (
           <div className="p-8 text-center text-black/70">No pending excuses.</div>
         ) : (
-          <div className="overflow-auto max-h-[500px]">
-            <table className="min-w-full divide-y divide-black/10">
-              <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Message</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-black uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black/10">
-                {excuses.map((excuse) => (
-                  <tr key={excuse._id} className="hover:bg-primary/5 transition-colors">
-                    <td className="px-4 py-3">
-                      <div>
-                        <p className="font-medium text-black">{excuse.userId?.username ?? '—'}</p>
-                        <p className="text-sm text-black/70">{excuse.userId?.email}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-black">{formatDate(excuse.date)}</td>
-                    <td className="px-4 py-3 text-sm text-black/80 max-w-xs">{excuse.message}</td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setConfirmModal({ action: 'approve', excuse })}
-                          disabled={!!actionLoading}
-                          className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-50 border border-primary"
-                        >
-                          {actionLoading === excuse._id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Check className="w-4 h-4" />
-                          )}
-                          Approve
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setConfirmModal({ action: 'reject', excuse })}
-                          disabled={!!actionLoading}
-                          className="flex items-center gap-1 px-4 py-2 rounded-lg border border-primary bg-white text-primary text-sm font-medium hover:bg-primary/5 disabled:opacity-50"
-                        >
-                          {actionLoading === excuse._id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <X className="w-4 h-4" />
-                          )}
-                          Reject
-                        </button>
-                      </div>
-                    </td>
+          <>
+            {/* Mobile cards */}
+            <div className="md:hidden p-4 space-y-3">
+              {excuses.map((excuse) => (
+                <div
+                  key={excuse._id}
+                  className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-bold text-black truncate">{excuse.userId?.username ?? '—'}</p>
+                      <p className="text-sm text-black/70 truncate">{excuse.userId?.email}</p>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setConfirmModal({ action: 'approve', excuse })}
+                        disabled={!!actionLoading}
+                        className="flex items-center gap-1 px-3 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-50 border border-primary"
+                      >
+                        {actionLoading === excuse._id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Check className="w-4 h-4" />
+                        )}
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmModal({ action: 'reject', excuse })}
+                        disabled={!!actionLoading}
+                        className="flex items-center gap-1 px-3 py-2 rounded-lg border border-primary bg-white text-primary text-sm font-medium hover:bg-primary/5 disabled:opacity-50"
+                      >
+                        {actionLoading === excuse._id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <X className="w-4 h-4" />
+                        )}
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-1 gap-2">
+                    <div>
+                      <p className="text-xs font-semibold text-black/70 uppercase">Date</p>
+                      <p className="text-sm text-black">{formatDate(excuse.date)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-black/70 uppercase">Message</p>
+                      <p className="text-sm text-black/80 whitespace-pre-wrap">{excuse.message}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-auto max-h-[500px]">
+              <table className="min-w-full divide-y divide-black/10">
+                <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Message</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-black uppercase">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-black/10">
+                  {excuses.map((excuse) => (
+                    <tr key={excuse._id} className="hover:bg-primary/5 transition-colors">
+                      <td className="px-4 py-3">
+                        <div>
+                          <p className="font-medium text-black">{excuse.userId?.username ?? '—'}</p>
+                          <p className="text-sm text-black/70">{excuse.userId?.email}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-black">{formatDate(excuse.date)}</td>
+                      <td className="px-4 py-3 text-sm text-black/80 max-w-xs">{excuse.message}</td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setConfirmModal({ action: 'approve', excuse })}
+                            disabled={!!actionLoading}
+                            className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-50 border border-primary"
+                          >
+                            {actionLoading === excuse._id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Check className="w-4 h-4" />
+                            )}
+                            Approve
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setConfirmModal({ action: 'reject', excuse })}
+                            disabled={!!actionLoading}
+                            className="flex items-center gap-1 px-4 py-2 rounded-lg border border-primary bg-white text-primary text-sm font-medium hover:bg-primary/5 disabled:opacity-50"
+                          >
+                            {actionLoading === excuse._id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <X className="w-4 h-4" />
+                            )}
+                            Reject
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 

@@ -156,78 +156,174 @@ export default function AdminManagementPage() {
 
       <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
         {usersLoading ? (
-          <TableSkeleton
-            rows={6}
-            cols={5}
-            headers={['Username', 'Email', 'Role', 'Change role', 'Actions']}
-            className="max-h-[500px]"
-          />
+          <>
+            {/* Mobile skeleton cards */}
+            <div className="md:hidden p-4 space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-2">
+                      <div className="h-4 w-24 rounded bg-black/10 animate-pulse" />
+                      <div className="h-4 w-40 rounded bg-black/10 animate-pulse" />
+                    </div>
+                    <div className="h-9 w-24 rounded-lg bg-black/10 animate-pulse" />
+                  </div>
+                  <div className="mt-3 grid grid-cols-1 gap-2">
+                    <div className="h-9 w-full rounded-lg bg-black/10 animate-pulse" />
+                    <div className="flex gap-2">
+                      <div className="h-9 w-20 rounded-lg bg-black/10 animate-pulse" />
+                      <div className="h-9 w-20 rounded-lg bg-black/10 animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table skeleton */}
+            <div className="hidden md:block">
+              <TableSkeleton
+                rows={6}
+                cols={5}
+                headers={['Username', 'Email', 'Role', 'Change role', 'Actions']}
+                className="max-h-[500px]"
+              />
+            </div>
+          </>
         ) : (
-          <div className="overflow-auto max-h-[500px]">
-            <table className="min-w-full divide-y divide-black/10">
-              <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Username</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Email</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Role</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Change role</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-black uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black/10">
-                {users.map((u) => (
-                  <tr key={u._id} className="hover:bg-primary/5 transition-colors">
-                    <td className="px-4 py-3 font-medium text-black">{u.username}</td>
-                    <td className="px-4 py-3 text-sm text-black/80">{u.email}</td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/30">
-                        {u.role}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <select
-                        value={u.role}
-                        onChange={(e) => handleRoleChange(u._id, e.target.value)}
-                        disabled={!!roleLoading}
-                        className="rounded-lg border border-black/20 text-sm px-3 py-1.5 focus:ring-2 focus:ring-primary focus:border-primary text-black disabled:opacity-50"
-                      >
-                        {ROLES.map((r) => (
-                          <option key={r} value={r}>{r}</option>
-                        ))}
-                      </select>
-                      {roleLoading === u._id && (
-                        <Loader2 className="w-4 h-4 inline-block ml-2 animate-spin text-primary" />
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => openEditUser(u)}
-                          className="p-2 rounded-lg text-black hover:bg-primary/10 hover:text-primary"
-                          title="Edit user"
+          <>
+            {/* Mobile cards */}
+            <div className="md:hidden p-4 space-y-3">
+              {users.map((u) => (
+                <div key={u._id} className="rounded-xl border border-black/10 border-t-4 border-t-primary bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-bold text-black truncate">{u.username}</p>
+                      <p className="text-sm text-black/70 truncate">{u.email}</p>
+                    </div>
+                    <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/30 shrink-0">
+                      {u.role}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <p className="text-xs font-semibold text-black/70 uppercase mb-1">Change role</p>
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={u.role}
+                          onChange={(e) => handleRoleChange(u._id, e.target.value)}
+                          disabled={!!roleLoading}
+                          className="flex-1 rounded-lg border border-black/20 text-sm px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary text-black disabled:opacity-50"
                         >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setDeleteConfirmUser(u);
-                            setDeleteConfirmError('');
-                          }}
-                          disabled={deleteLoading === u._id || String(currentUser?.id) === String(u._id)}
-                          className="p-2 rounded-lg text-primary hover:bg-primary/10 disabled:opacity-50"
-                          title={String(currentUser?.id) === String(u._id) ? 'Cannot delete yourself' : 'Delete user'}
-                        >
-                          {deleteLoading === u._id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                        </button>
+                          {ROLES.map((r) => (
+                            <option key={r} value={r}>{r}</option>
+                          ))}
+                        </select>
+                        {roleLoading === u._id && (
+                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                        )}
                       </div>
-                    </td>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => openEditUser(u)}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-black/20 bg-white text-black text-sm font-medium hover:bg-black/5"
+                      >
+                        <Pencil className="w-4 h-4" />
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDeleteConfirmUser(u);
+                          setDeleteConfirmError('');
+                        }}
+                        disabled={deleteLoading === u._id || String(currentUser?.id) === String(u._id)}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-primary bg-white text-primary text-sm font-medium hover:bg-primary/5 disabled:opacity-50"
+                        title={String(currentUser?.id) === String(u._id) ? 'Cannot delete yourself' : 'Delete user'}
+                      >
+                        {deleteLoading === u._id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-auto max-h-[500px]">
+              <table className="min-w-full divide-y divide-black/10">
+                <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Username</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Email</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Role</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Change role</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-black uppercase">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-black/10">
+                  {users.map((u) => (
+                    <tr key={u._id} className="hover:bg-primary/5 transition-colors">
+                      <td className="px-4 py-3 font-medium text-black">{u.username}</td>
+                      <td className="px-4 py-3 text-sm text-black/80">{u.email}</td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/30">
+                          {u.role}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <select
+                          value={u.role}
+                          onChange={(e) => handleRoleChange(u._id, e.target.value)}
+                          disabled={!!roleLoading}
+                          className="rounded-lg border border-black/20 text-sm px-3 py-1.5 focus:ring-2 focus:ring-primary focus:border-primary text-black disabled:opacity-50"
+                        >
+                          {ROLES.map((r) => (
+                            <option key={r} value={r}>{r}</option>
+                          ))}
+                        </select>
+                        {roleLoading === u._id && (
+                          <Loader2 className="w-4 h-4 inline-block ml-2 animate-spin text-primary" />
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditUser(u)}
+                            className="p-2 rounded-lg text-black hover:bg-primary/10 hover:text-primary"
+                            title="Edit user"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDeleteConfirmUser(u);
+                              setDeleteConfirmError('');
+                            }}
+                            disabled={deleteLoading === u._id || String(currentUser?.id) === String(u._id)}
+                            className="p-2 rounded-lg text-primary hover:bg-primary/10 disabled:opacity-50"
+                            title={String(currentUser?.id) === String(u._id) ? 'Cannot delete yourself' : 'Delete user'}
+                          >
+                            {deleteLoading === u._id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
