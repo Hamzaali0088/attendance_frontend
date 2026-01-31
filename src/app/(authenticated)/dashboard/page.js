@@ -81,20 +81,126 @@ export default function DashboardPage() {
   };
 
   if (loading) {
+    const cardValue = (w = 'w-16') => <Skeleton className={`h-7 ${w}`} />;
     return (
       <div className="max-w-7xl mx-auto space-y-8">
         <PageHeader title="Dashboard" />
         <div className="pt-2 space-y-8">
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary px-6 py-4">
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="h-5 w-48" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-16 rounded-lg border border-black/10" />
-            ))}
-          </div>
-          <Skeleton className="h-40 w-full rounded-xl border border-black/10" />
+          <ClockComponent />
+
+          {user.role === 'user' && (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <SummaryCard title="Total Present Days" value={cardValue()} icon={UserCheck} />
+                <SummaryCard title="Total Absent Days" value={cardValue()} icon={UserX} />
+                <SummaryCard title="Total Leaves" value={cardValue()} icon={CalendarClock} />
+                <SummaryCard title="Total Office Hours" value={cardValue('w-28')} icon={Clock} />
+              </div>
+
+              <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary p-5">
+                <h2 className="text-lg font-bold text-black mb-3">Today&apos;s Attendance</h2>
+                <div className="space-y-2">
+                  <p className="text-black/80">Status: <Skeleton className="inline-block h-4 w-16 align-middle ml-2" /></p>
+                  <p className="text-black/80">Arrival: <Skeleton className="inline-block h-4 w-24 align-middle ml-2" /></p>
+                  <p className="text-black/80">Exit: <Skeleton className="inline-block h-4 w-24 align-middle ml-2" /></p>
+                  <p className="text-black/80">Today total working hours: <Skeleton className="inline-block h-4 w-28 align-middle ml-2" /></p>
+                </div>
+              </div>
+            </>
+          )}
+
+          {(user.role === 'admin' || user.role === 'superadmin') && (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <SummaryCard title="Total Employees" value={cardValue()} icon={Users} />
+                <SummaryCard title="Present Today" value={cardValue()} icon={UserCheck} />
+                <SummaryCard title="Absent Today" value={cardValue()} icon={UserX} />
+                <SummaryCard title="Pending Excuses" value={cardValue()} icon={CheckSquare} />
+              </div>
+
+              {user.role === 'admin' && (
+                <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
+                  <h2 className="text-lg font-bold text-black p-5 pb-0">Today&apos;s Attendance Preview</h2>
+                  <div className="p-5 overflow-auto max-h-[500px]">
+                    <table className="min-w-full divide-y divide-black/10">
+                      <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-black/10">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <tr key={i}>
+                            <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
+                            <td className="px-4 py-3"><Skeleton className="h-5 w-16 rounded-full" /></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {user.role === 'superadmin' && (
+                <>
+                  <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
+                    <h2 className="text-lg font-bold text-black p-5 pb-0">Today&apos;s Attendance (All Employees)</h2>
+                    <p className="text-sm text-black/70 px-5 pt-1">Showing today&apos;s status for all users.</p>
+                    <div className="p-5 overflow-auto max-h-[500px]">
+                      <table className="min-w-full divide-y divide-black/10">
+                        <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Status</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Arrive</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Leave</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Today</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-black/10">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <tr key={i}>
+                              <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
+                              <td className="px-4 py-3"><Skeleton className="h-5 w-16 rounded-full" /></td>
+                              <td className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>
+                              <td className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>
+                              <td className="px-4 py-3"><Skeleton className="h-4 w-24" /></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
+                    <h2 className="text-lg font-bold text-black p-5 pb-0">Excuse Requests</h2>
+                    <p className="text-sm text-black/70 px-5 pt-1">Pending: <Skeleton className="inline-block h-4 w-6 align-middle" /> — Use &quot;Excuse Approvals&quot; in the sidebar to approve or reject.</p>
+                    <div className="p-5 overflow-auto max-h-[500px]">
+                      <table className="min-w-full divide-y divide-black/10">
+                        <thead className="bg-white sticky top-0 z-[1] border-b border-black/10">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Employee</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Message</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-black/10">
+                          {[1, 2, 3, 4].map((i) => (
+                            <tr key={i}>
+                              <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
+                              <td className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>
+                              <td className="px-4 py-3"><Skeleton className="h-4 w-56" /></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
     );

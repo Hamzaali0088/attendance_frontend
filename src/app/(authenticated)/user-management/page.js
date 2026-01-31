@@ -152,7 +152,12 @@ export default function AdminManagementPage() {
 
       <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
         {usersLoading ? (
-          <TableSkeleton rows={6} cols={5} className="max-h-[500px]" />
+          <TableSkeleton
+            rows={6}
+            cols={5}
+            headers={['Username', 'Email', 'Role', 'Change role', 'Actions']}
+            className="max-h-[500px]"
+          />
         ) : (
           <div className="overflow-auto max-h-[500px]">
             <table className="min-w-full divide-y divide-black/10">

@@ -7,6 +7,7 @@ import { getUser, isAuthenticated } from '@/lib/auth';
 import { getPendingExcuses, updateExcuseStatus } from '@/lib/api';
 import PageHeader from '@/components/PageHeader';
 import { TableSkeleton } from '@/components/Skeleton';
+import Modal from '@/components/Modal';
 
 function formatDate(d) {
   return new Date(d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
@@ -81,7 +82,12 @@ export default function ExcuseApprovalsPage() {
       <PageHeader title="Excuse Approvals" />
       <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary overflow-hidden">
         {loading ? (
-          <TableSkeleton rows={6} cols={4} className="max-h-[500px]" />
+          <TableSkeleton
+            rows={6}
+            cols={4}
+            headers={['Employee', 'Date', 'Message', 'Actions']}
+            className="max-h-[500px]"
+          />
         ) : excuses.length === 0 ? (
           <div className="p-8 text-center text-black/70">No pending excuses.</div>
         ) : (
@@ -145,7 +151,7 @@ export default function ExcuseApprovalsPage() {
       </div>
 
       {confirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <Modal open={!!confirmModal} onClose={() => setConfirmModal(null)}>
           <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary max-w-md w-full p-6">
             <h3 className="text-lg font-bold text-black mb-2">
               {confirmModal.action === 'approve' ? 'Confirm Approve' : 'Confirm Reject'}
@@ -192,7 +198,7 @@ export default function ExcuseApprovalsPage() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

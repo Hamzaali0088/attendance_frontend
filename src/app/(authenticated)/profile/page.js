@@ -37,7 +37,6 @@ export default function ProfilePage() {
             <p className="text-xs text-black/60 mt-1">Role: {user.role}</p>
           </div>
         </div>
-        <p className="text-sm text-black/70">Profile settings and preferences can be added here.</p>
       </div>
     </div>
   );

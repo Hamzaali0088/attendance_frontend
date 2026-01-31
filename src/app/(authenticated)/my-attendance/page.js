@@ -81,22 +81,21 @@ export default function MyAttendancePage() {
       <ClockComponent />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Presences" value={summary?.presences ?? 0} icon={UserCheck} />
-        <SummaryCard title="Absences" value={summary?.absences ?? 0} icon={UserX} />
-        <SummaryCard title="Leaves" value={summary?.leaves ?? 0} icon={CalendarClock} />
-        <SummaryCard title="Total Office Hours" value={formatHoursToHMS(summary?.totalOfficeHours) ?? '—'} icon={Clock} />
+        <SummaryCard title="Presences" value={loading ? <Skeleton className="h-7 w-16" /> : (summary?.presences ?? 0)} icon={UserCheck} />
+        <SummaryCard title="Absences" value={loading ? <Skeleton className="h-7 w-16" /> : (summary?.absences ?? 0)} icon={UserX} />
+        <SummaryCard title="Leaves" value={loading ? <Skeleton className="h-7 w-16" /> : (summary?.leaves ?? 0)} icon={CalendarClock} />
+        <SummaryCard title="Total Office Hours" value={loading ? <Skeleton className="h-7 w-28" /> : (formatHoursToHMS(summary?.totalOfficeHours) ?? '—')} icon={Clock} />
       </div>
 
+      <h2 className="text-lg font-bold text-black">Attendance (last 30 days)</h2>
       {loading ? (
-        <>
-          <Skeleton className="h-6 w-48" />
-          <TableSkeleton rows={8} cols={5} />
-        </>
+        <TableSkeleton
+          rows={8}
+          cols={5}
+          headers={['Date', 'Status', 'In', 'Out', 'Hours']}
+        />
       ) : (
-        <>
-          <h2 className="text-lg font-bold text-black">Attendance (last 30 days)</h2>
-          <AttendanceTable attendance={attendance} showHours />
-        </>
+        <AttendanceTable attendance={attendance} showHours />
       )}
 
       <ExcuseModal

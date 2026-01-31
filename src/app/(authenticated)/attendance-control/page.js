@@ -8,6 +8,7 @@ import { getAdminAllAttendance, markArrival, markExit } from '@/lib/api';
 import { toDateKey, todayKey, formatHoursToHMS } from '@/lib/dateUtils';
 import PageHeader from '@/components/PageHeader';
 import { CardRowSkeleton } from '@/components/Skeleton';
+import Modal from '@/components/Modal';
 
 function formatElapsed(loginTime) {
   if (!loginTime) return '00:00:00';
@@ -202,7 +203,7 @@ export default function AttendanceControlPage() {
       )}
 
       {confirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <Modal open={!!confirmModal} onClose={() => setConfirmModal(null)}>
           <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary max-w-md w-full p-6">
             <h3 className="text-lg font-bold text-black mb-2">
               {confirmModal.type === 'arrival' ? 'Confirm Arrival' : 'Confirm Exit'}
@@ -249,7 +250,7 @@ export default function AttendanceControlPage() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
