@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import Modal from '@/components/Modal';
 
 export default function ExcuseModal({ isOpen, onClose, onSubmit, loading }) {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -17,7 +18,7 @@ export default function ExcuseModal({ isOpen, onClose, onSubmit, loading }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+    <Modal open={isOpen} onClose={onClose}>
       <div className="bg-white rounded-xl shadow-card border border-black/10 border-t-4 border-t-primary max-w-md w-full p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-black">Send Excuse</h2>
@@ -69,6 +70,6 @@ export default function ExcuseModal({ isOpen, onClose, onSubmit, loading }) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
