@@ -134,7 +134,7 @@ export default function AdminManagementPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
-      <PageHeader title="Admin Management" />
+      <PageHeader title="User Management" />
       <div className="flex flex-wrap items-center justify-end gap-4">
         <button
           type="button"

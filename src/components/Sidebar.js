@@ -49,7 +49,7 @@ const adminNav = [
 const superadminNav = [
   { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
   { href: '/excuse-approvals', label: 'Excuse Approvals', icon: 'CheckSquare' },
-  { href: '/admin-management', label: 'Admin Management', icon: 'Settings' },
+  { href: '/user-management', label: 'User Management', icon: 'Users' },
   { href: '/reports', label: 'Reports', icon: 'BarChart3' },
 ];
 

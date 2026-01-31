@@ -63,26 +63,28 @@ export default function MyAttendancePage() {
   const user = getUser();
   if (!user) return null;
 
+  const sendExcuseButton = (
+    <button
+      type="button"
+      onClick={() => setExcuseModalOpen(true)}
+      title="Send Excuse (if absent)"
+      className="flex items-center justify-center p-2 rounded-lg bg-primary text-white hover:bg-primary/90 border border-primary shadow-card transition-colors"
+      aria-label="Send Excuse (if absent)"
+    >
+      <MessageSquarePlus className="w-5 h-5" />
+    </button>
+  );
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
-      <PageHeader title="My Attendance" />
+      <PageHeader title="My Attendance" actions={sendExcuseButton} />
       <ClockComponent />
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 min-w-0">
-          <SummaryCard title="Presences" value={summary?.presences ?? 0} icon={UserCheck} />
-          <SummaryCard title="Absences" value={summary?.absences ?? 0} icon={UserX} />
-          <SummaryCard title="Leaves" value={summary?.leaves ?? 0} icon={CalendarClock} />
-          <SummaryCard title="Total Office Hours" value={formatHoursToHMS(summary?.totalOfficeHours) ?? '—'} icon={Clock} />
-        </div>
-        <button
-          type="button"
-          onClick={() => setExcuseModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 border border-primary shadow-card"
-        >
-          <MessageSquarePlus className="w-5 h-5" />
-          Send Excuse (if absent)
-        </button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <SummaryCard title="Presences" value={summary?.presences ?? 0} icon={UserCheck} />
+        <SummaryCard title="Absences" value={summary?.absences ?? 0} icon={UserX} />
+        <SummaryCard title="Leaves" value={summary?.leaves ?? 0} icon={CalendarClock} />
+        <SummaryCard title="Total Office Hours" value={formatHoursToHMS(summary?.totalOfficeHours) ?? '—'} icon={Clock} />
       </div>
 
       {loading ? (

@@ -22,6 +22,8 @@ import AttendanceTable from '@/components/AttendanceTable';
 
 export default function DashboardPage() {
   const user = getUser();
+  const userId = user?.id;
+  const userRole = user?.role;
   const [loading, setLoading] = useState(true);
   const [userSummary, setUserSummary] = useState(null);
   const [userAttendance, setUserAttendance] = useState([]);
@@ -34,17 +36,17 @@ export default function DashboardPage() {
     if (!user) return;
     const load = async () => {
       try {
-        if (user.role === 'user') {
+        if (userRole === 'user') {
           const data = await getAttendance(null, 30);
           setUserSummary(data.summary || {});
           setUserAttendance(data.attendance || []);
-        } else if (user.role === 'admin' || user.role === 'superadmin') {
+        } else if (userRole === 'admin' || userRole === 'superadmin') {
           const [allAttendance, excuses] = await Promise.all([
-            user.role === 'superadmin' ? getAdminAllAttendance(30) : getAdminAllAttendance(30),
-            user.role === 'superadmin' ? getPendingExcuses() : Promise.resolve([]),
+            userRole === 'superadmin' ? getAdminAllAttendance(30) : getAdminAllAttendance(30),
+            userRole === 'superadmin' ? getPendingExcuses() : Promise.resolve([]),
           ]);
           setAdminData(allAttendance || []);
-          if (user.role === 'superadmin') setPendingExcuses(excuses || []);
+          if (userRole === 'superadmin') setPendingExcuses(excuses || []);
         }
       } catch (err) {
         console.error(err);
@@ -53,7 +55,7 @@ export default function DashboardPage() {
       }
     };
     load();
-    if (user.role === 'user') {
+    if (userRole === 'user') {
       const refetch = () => load();
       window.addEventListener('focus', refetch);
       const onVisible = () => { if (typeof document !== 'undefined' && document.visibilityState === 'visible') refetch(); };
@@ -65,7 +67,7 @@ export default function DashboardPage() {
         clearInterval(poll);
       };
     }
-  }, [user]);
+  }, [userId, userRole]);
 
   useEffect(() => {
     if (user?.role !== 'user') return;
@@ -95,9 +97,9 @@ export default function DashboardPage() {
             <Skeleton className="h-8 w-32" />
             <Skeleton className="h-5 w-48" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-24 rounded-xl border border-black/10" />
+              <Skeleton key={i} className="h-16 rounded-lg border border-black/10" />
             ))}
           </div>
           <Skeleton className="h-40 w-full rounded-xl border border-black/10" />
@@ -114,7 +116,7 @@ export default function DashboardPage() {
 
       {user.role === 'user' && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <SummaryCard
               title="Total Present Days"
               value={userSummary?.presences ?? 0}
@@ -169,7 +171,7 @@ export default function DashboardPage() {
 
       {(user.role === 'admin' || user.role === 'superadmin') && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <SummaryCard
               title="Total Employees"
               value={adminData.length}
